@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI;
+using Windows.Media.SpeechSynthesis;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,36 +16,35 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace HelloWord
+namespace TextToSpeech
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        //private object readText;
+
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void btnTextToSpeech_Click(object sender, RoutedEventArgs e)
         {
-            base.OnNavigatedTo(e);
+            readText.(txtContent.Text);
         }
+        
 
-        private void inputButton_Click(object sender, RoutedEventArgs e)
+        private async void readText(string text)
         {
-            resultOutput.Text = String.Format("Hello World {0}", nameInput.Text);
-        }
+            var voice = SpeechSynthesizer.AllVoices;
 
-        private void SetBackgroundTitleBar()
-        {
-            var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            var titleBar = appView.TitleBar;
-            titleBar.BackgroundColor = Colors.Black;
-            titleBar.ForegroundColor = Colors.Yellow;
-            titleBar.ButtonBackgroundColor = Colors.Black;
-            titleBar.ButtonBackgroundColor = Colors.Yellow;
+           using (var speech = new SpeechSynthesizer())
+           {
+                speech.Voice = voice.First(gender => gender.Gender == VoiceGender.Female);
+               await speech.SynthesizeTextToStreamAsync(text);
+            }
         }
     }
 }
